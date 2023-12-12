@@ -1,0 +1,64 @@
+{% extends 'base.html' %} {% block title %}Home Page{% endblock %} {% block content %}
+<h2>Start of Boggle Game</h2>
+<p>This is your randomly generated Boggle board...</p>
+<table>
+  {% for row in session['board'] %}
+  <tr>
+    {% for letter in row %}
+    <td>{{letter}}</td>
+    {% endfor %}
+  </tr>
+  {% endfor %}
+</table>
+
+<form id="guessForm">
+  <p>Make a guess! (NOTE: You only have 40 SECONDS!!!!)</p>
+  <input type="text" placeholder="your guess here" name="user-guess" />
+  <button type="submit">Submit</button>
+</form>
+<br />
+<div id="resultMessage"></div>
+<div id="score"></div>
+
+<!-- Axios library cdn -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+  const form = document.getElementById("guessForm");
+  let userScore = 0;
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    // Get the user's guess from the form input
+    const formData = new FormData(form);
+    const userGuess = formData.get("user-guess");
+
+    try {
+      // Send the guess to the server using Axios
+      const response = await axios.post("/guess", { "user-guess": userGuess });
+      console.log("Guess sent successfully!", response.data);
+
+      if (response.data.result === "ok") {
+        resultMessage.textContent = "Your word is good!";
+        userScore += userGuess.length;
+        score.textContent = `Score: ${userScore}`;
+      } else if (response.data.result === "not-on-board") {
+        resultMessage.textContent = "Your guess is not on the board.";
+        score.textContent = `Score: ${userScore}`;
+      } else {
+        resultMessage.textContent = "Your guess is not a word :(";
+        score.textContent = `Score: ${userScore}`;
+      }
+    } catch (error) {
+      console.error("Error sending guess:", error);
+    }
+  });
+
+  function disableFormSubmission() {
+    form.removeEventListener("submit", handleSubmit);
+    resultMessage.textContent = "Game over. Time limit reached.";
+    form.querySelector("button[type='submit']").disabled = true;
+  }
+  setTimeout(disableFormSubmission, 40000); // 60 seconds = 60000 milliseconds
+</script>
+{% endblock %}

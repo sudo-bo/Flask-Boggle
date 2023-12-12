@@ -1,0 +1,20 @@
+td {
+  padding: 5px;
+  font-size: large;
+  font-weight: lighter;
+  border: 1px solid black;
+}
+
+#resultMessage {
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 5px;
+  background-color: rgba(46, 138, 46, 0.635);
+}
+
+#score {
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 5px;
+  background-color: rgba(138, 92, 46, 0.635);
+}
